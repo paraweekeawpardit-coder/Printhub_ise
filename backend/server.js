@@ -1,7 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const dotenv = require("dotenv");
+const { supabase } = require("./config/db");
 
-require("dotenv").config();
+dotenv.config();
 
 const app = express();
 
@@ -12,7 +14,19 @@ app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
-const PORT = process.env.PORT;
+app.get("/customers", async (req, res) => {
+  const { data, error } = await supabase
+    .from("customer")
+    .select("*");
+
+  if (error) {
+    return res.status(500).json(error);
+  }
+
+  res.json(data);
+});
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

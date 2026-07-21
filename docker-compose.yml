@@ -1,0 +1,39 @@
+services:
+  database:
+    image: postgres:17
+    container_name: printhub-db
+    restart: always
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: printhub
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: printhub-backend
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      - database
+
+  frontend:
+    build: ./frontend
+    container_name: printhub-frontend
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
